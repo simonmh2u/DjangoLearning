@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>category</title>
+		<meta name="author" content="root" />
+		<!-- Date: 2014-08-06 -->
+	</head>
+	<body>
+		{{category_name}}
+		{% if category %}
+			{% if pages %}
+				<ul>
+				{%for page in pages %}
+					<li><a href="{{page.url}}">{{page.title}}</a></li> 
+				{% endfor %}
+				</ul>
+			{% else %}
+				There are no Pages for requested Category
+			{% endif %}
+		{% else %}
+			Requested Category does not exist
+		{% endif %} 
+	</body>
+</html>
+
