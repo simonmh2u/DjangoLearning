@@ -34,6 +34,7 @@ def category(request, category_name_url):
         pages = Page.objects.filter(category=category)
         context_dict['pages'] = pages
         context_dict['category'] = category
+        context_dict['category_name_url'] = category
             
     except Category.DoesNotExist:
         pass
@@ -58,7 +59,7 @@ def add_category(request):
     return render_to_response('rango/category_new.html',{'form':form},context)
         
         
-def add_page(request,category):
+def add_page(request,category_name_url):
     context = RequestContext(request)
     
     if request.method == 'POST':
