@@ -61,7 +61,7 @@ def add_category(request):
         
     return render_to_response('rango/category_new.html',{'form':form},context)
         
-        
+@login_required        
 def add_page(request,category_name_url):
     context = RequestContext(request)
     category_name = category_name_url.replace('_',' ')
