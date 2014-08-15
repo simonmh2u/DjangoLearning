@@ -1,28 +1,21 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-"http://www.w3.org/TR/html4/strict.dtd">
+{% extends 'rango/base.html' %}
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>category</title>
-		<meta name="author" content="root" />
-		<!-- Date: 2014-08-06 -->
-	</head>
-	<body>
-		{{category_name}}
-		{% if category %}
-			{% if pages %}
-				<ul>
-				{%for page in pages %}
-					<li><a href="{{page.url}}">{{page.title}}</a></li> 
-				{% endfor %}
-				</ul>
-			{% else %}
-				There are no Pages for requested Category
-			{% endif %}
-		{% else %}
-			Requested Category does not exist
-		{% endif %} 
-	</body>
-</html>
+{% block title %}{{ category_name }}{% endblock %}
 
+{% block body_block %}
+    <h1>{{ category_name }}</h1>
+
+    {% if pages %}
+    <ul>
+        {% for page in pages %}
+        <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <strong>No pages currently in category.</strong>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+       <a href="/rango/category/{{category_name_url}}/add_page/">Add a Page</a>
+    {% endif %}
+{% endblock %}
