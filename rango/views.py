@@ -6,16 +6,29 @@ from rango.forms import CategoryForm, PageForm, UserProfileForm, UserForm
 from django.contrib.auth import authenticate, login, logout
 from django.http.response import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-
+from datetime import datetime
 # Create your views here.
 
 
 def index(request):
+    request.session.set_test_cookie()
     context = RequestContext(request)
     categories = Category.objects.order_by('-likes')[:5]
     con_dict = {'categories': categories}
     pages = Page.objects.order_by('-views')[:5]
     con_dict['pages'] = pages
+        #### NEW CODE ####
+    if request.session.get('last_visit'):
+        # The session has a value for the last visit
+        
+        visits = request.session.get('visits', 0)
+        request.session['visits'] = visits + 1
+        request.session['last_visit'] = str(datetime.now())
+    else:
+        # The get returns None, and the session does not have a value for the last visit.
+        request.session['last_visit'] = str(datetime.now())
+        request.session['visits'] = 1
+    #### END NEW CODE ####
     
     for category in categories:
         category.url = category.name.replace(' ','_')
@@ -23,7 +36,11 @@ def index(request):
 
 
 def about(request):
-    return render_to_response('rango/about.html')
+    if request.session.get('visits'):
+        count = request.session.get('visits')
+    else:
+        count = 0
+    return render_to_response('rango/about.html',{'count':count})
 
 
 def category(request, category_name_url):
@@ -85,6 +102,9 @@ def add_page(request,category_name_url):
 def register(request):
     context = RequestContext(request)
     registered = False
+    if request.session.test_cookie_worked():
+        print ">>>>>TEST COOKIE WORKED"
+        request.session.delete_test_cookie()
     
     if request.POST:
         form = UserForm(request.POST)
