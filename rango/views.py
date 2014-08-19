@@ -1,12 +1,13 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
 from django.template.context import RequestContext
+from django.http import HttpResponse
 from rango.models import Category,Page
 from rango.forms import CategoryForm, PageForm, UserProfileForm, UserForm
 from django.contrib.auth import authenticate, login, logout
 from django.http.response import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+
 # Create your views here.
 
 
@@ -31,7 +32,7 @@ def index(request):
     #### END NEW CODE ####
     
     for category in categories:
-        category.url = category.name.replace(' ','_')
+        category.url = category.name.replace(' ', '_')
     return render_to_response('rango/index.html', con_dict, context)
 
 
@@ -44,30 +45,31 @@ def about(request):
 
 
 def category(request, category_name_url):
-    context_dict={}
+    context_dict = {}
     context = RequestContext(request)
-    category_name = category_name_url.replace('_',' ')
+    category_name = category_name_url.replace('_', ' ')
     context_dict['category_name'] = category_name
-    
+
     try:
         category = Category.objects.get(name=category_name)
         pages = Page.objects.filter(category=category)
         context_dict['pages'] = pages
         context_dict['category'] = category
+
         context_dict['category_name_url'] = category_name_url
-            
+
     except Category.DoesNotExist:
         pass
-    
+
     return render_to_response('rango/category.html',context_dict,context)
-    
+
 @login_required
 def add_category(request):
     context = RequestContext(request)
-                             
+
     if request.method == 'POST':
         form = CategoryForm(request.POST)
-        
+
         if form.is_valid():
             form.save(commit=True)
             return index(request)
@@ -75,10 +77,10 @@ def add_category(request):
             form.errors
     else:
         form = CategoryForm()
-        
+
     return render_to_response('rango/category_new.html',{'form':form},context)
-        
-@login_required        
+
+@login_required
 def add_page(request,category_name_url):
     context = RequestContext(request)
     category_name = category_name_url.replace('_',' ')
@@ -92,10 +94,10 @@ def add_page(request,category_name_url):
             return category(request,category_name_url)
         else:
             form.errors
-        
+
     else:
         form = PageForm()
-        
+
     return render_to_response('rango/page_new.html',{'form':form,'category_name':category_name,'category_name_url':category_name_url},context)
 
 
@@ -106,15 +108,16 @@ def register(request):
         print ">>>>>TEST COOKIE WORKED"
         request.session.delete_test_cookie()
     
+
     if request.POST:
         form = UserForm(request.POST)
         profile_form = UserProfileForm(request.POST)
-        
+
         if form.is_valid() and profile_form.is_valid():
             user = form.save()
             user.set_password(user.password)
             user.save()
-        
+
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.picture = request.FILES['picture']            
@@ -122,11 +125,11 @@ def register(request):
             registered = True
         else:
             form.errors, profile_form.errors
-        
+
     else:
         form = UserForm()
         profile_form = UserProfileForm()
-    
+
     return render_to_response('rango/register.html',{'form':form,'profile_form':profile_form,'registered':registered},context)
 
 
@@ -138,7 +141,7 @@ def user_login(request):
         password = request.POST['password']
         
         user = authenticate(username=username, password=password)
-        
+
         if user:
             if user.is_active:
                 login(request,user)
@@ -147,7 +150,7 @@ def user_login(request):
                 return HttpResponse("Your Rango account is disabled.")
         else:
             print "Invalid login details: {0}, {1}".format(username, password)
-            return HttpResponse("Invalid login details supplied.")        
+            return HttpResponse("Invalid login details supplied.")
     else:
         return render_to_response('rango/login.html', {}, context)
 
@@ -160,3 +163,4 @@ def user_logout(request):
 
     # Take the user back to the homepage.
     return HttpResponseRedirect('/rango/')
+
