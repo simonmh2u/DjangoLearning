@@ -58,4 +58,4 @@ if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tango_with_django_project.settings')
     from rango.models import Category, Page
     populate()
-    print "Done"
+    print "Done dona done"
