@@ -59,3 +59,5 @@ if __name__ == '__main__':
     from rango.models import Category, Page
     populate()
     print "Done dona done"
+    print "Done"
+    print "Wassup"
